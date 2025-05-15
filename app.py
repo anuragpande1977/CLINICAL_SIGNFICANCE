@@ -103,9 +103,10 @@ if st.button("Calculate"):
         "Projected Interpretation": [proj_interpretation]
     })
 
-    # Export to Excel
+ # Export to Excel
     excel_filename = f"{file_name}.xlsx"
     df_output.to_excel(excel_filename, index=False)
 
     with open(excel_filename, "rb") as f:
-        st.download_button("📥
+        st.download_button("📥 Download Results as Excel", data=f, file_name=excel_filename, mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
