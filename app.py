@@ -1,6 +1,7 @@
 import streamlit as st
 from scipy import stats
 import numpy as np
+import pandas as pd
 
 st.title("Clinical Trial Effect Size Analyzer")
 st.markdown("""
@@ -10,6 +11,8 @@ This tool calculates **t-value**, **p-value**, and **Cohen's d** from group stat
 
 st.header("📥 Input Parameters")
 
+parameter_name = st.text_input("Name of clinical parameter", value="Anterior Terminal Hair Count")
+
 n_active = st.number_input("Sample size: Active group (n1)", min_value=2, value=20)
 mean_active = st.number_input("Mean change: Active group", value=11.0)
 sd_active = st.number_input("Standard deviation: Active group", value=18.28)
@@ -17,6 +20,8 @@ sd_active = st.number_input("Standard deviation: Active group", value=18.28)
 n_placebo = st.number_input("Sample size: Placebo group (n2)", min_value=2, value=10)
 mean_placebo = st.number_input("Mean change: Placebo group", value=1.9)
 sd_placebo = st.number_input("Standard deviation: Placebo group", value=16.22)
+
+file_name = st.text_input("Enter filename for Excel download (without extension)", value="trial_results")
 
 if st.button("Calculate"):
     # Step 1: Mean difference
@@ -49,9 +54,28 @@ if st.button("Calculate"):
         interpretation = "Large effect – highly likely to become statistically and clinically significant."
 
     st.header("📊 Results")
-    st.write(f"**Mean Difference:** {mean_diff:.2f} hairs")
+    st.write(f"**Parameter:** {parameter_name}")
+    st.write(f"**Mean Difference:** {mean_diff:.2f} units")
     st.write(f"**Pooled Standard Deviation:** {sp:.2f}")
     st.write(f"**t-value:** {t_value:.2f}")
     st.write(f"**p-value (two-tailed):** {p_value:.3f}")
     st.write(f"**Cohen's d (Effect Size):** {cohen_d:.2f}")
     st.success(interpretation)
+
+    # Prepare DataFrame
+    df_output = pd.DataFrame({
+        "Parameter": [parameter_name],
+        "Mean Difference": [mean_diff],
+        "Pooled SD": [sp],
+        "t-value": [t_value],
+        "p-value": [p_value],
+        "Cohen's d": [cohen_d],
+        "Interpretation": [interpretation]
+    })
+
+    # Export to Excel
+    excel_filename = f"{file_name}.xlsx"
+    df_output.to_excel(excel_filename, index=False)
+    
+    with open(excel_filename, "rb") as f:
+        st.download_button("📥 Download Results as Excel", data=f, file_name=excel_filename, mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
