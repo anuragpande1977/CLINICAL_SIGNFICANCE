@@ -2,6 +2,7 @@ import streamlit as st
 from scipy import stats
 import numpy as np
 import pandas as pd
+import io
 
 st.title("Clinical Trial Effect Size Analyzer")
 st.markdown("""
@@ -103,10 +104,11 @@ if st.button("Calculate"):
         "Projected Interpretation": [proj_interpretation]
     })
 
- # Export to Excel
-    excel_filename = f"{file_name}.xlsx"
-    df_output.to_excel(excel_filename, index=False)
+    # Export to Excel using BytesIO
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df_output.to_excel(writer, index=False)
+    output.seek(0)
 
-    with open(excel_filename, "rb") as f:
-        st.download_button("📥 Download Results as Excel", data=f, file_name=excel_filename, mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    st.download_button("📥 Download Results as Excel", data=output, file_name=f"{file_name}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
