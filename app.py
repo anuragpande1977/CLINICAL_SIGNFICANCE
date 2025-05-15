@@ -8,7 +8,7 @@ st.title("Clinical Trial Effect Size Analyzer")
 st.markdown("""
 This tool calculates **t-value**, **p-value**, and **Cohen's d** from group statistics
 (mean, SD, and N), and provides an interpretation of potential significance.
-It also projects future trends assuming linear growth.
+It also projects future trends assuming linear growth. program belongs to VALENSA INTERNATIONAL
 """)
 
 st.header("📥 Input Parameters")
