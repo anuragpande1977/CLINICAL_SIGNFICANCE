@@ -110,5 +110,5 @@ if st.button("Calculate"):
         df_output.to_excel(writer, index=False)
     output.seek(0)
 
-    st.download_button("📥 Download Results as Excel", data=output, file_name=f"{file_name}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    st.download_button("📥 Download Results as Excel, COPYRIGHT A.PANDE@VALENSA.COM", data=output, file_name=f"{file_name}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
