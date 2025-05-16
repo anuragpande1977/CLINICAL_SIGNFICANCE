@@ -8,7 +8,7 @@ st.title("Clinical Trial Effect Size Analyzer")
 st.markdown("""
 This tool calculates **t-value**, **p-value**, and **Cohen's d** from group statistics
 (mean, SD, and N), and provides an interpretation of potential significance.
-It also projects future trends assuming linear growth. program belongs to VALENSA INTERNATIONAL
+It also projects future trends assuming linear growth. Program belongs to VALENSA INTERNATIONAL
 """)
 
 st.header("📥 Input Parameters")
@@ -18,10 +18,12 @@ parameter_name = st.text_input("Name of clinical parameter", value="Anterior Ter
 n_active = st.number_input("Sample size: Active group (n1)", min_value=2, value=20)
 mean_active = st.number_input("Mean change: Active group at Day 90", value=11.0)
 sd_active = st.number_input("Standard deviation: Active group", value=18.28)
+baseline_active = st.number_input("Baseline value: Active group", value=121.4)
 
 n_placebo = st.number_input("Sample size: Placebo group (n2)", min_value=2, value=10)
 mean_placebo = st.number_input("Mean change: Placebo group at Day 90", value=1.9)
 sd_placebo = st.number_input("Standard deviation: Placebo group", value=16.22)
+baseline_placebo = st.number_input("Baseline value: Placebo group", value=124.2)
 
 project_to_day = st.number_input("Project data to how many total days?", min_value=90, value=180, step=30)
 current_day = 90
@@ -74,6 +76,10 @@ if st.button("Calculate"):
     else:
         proj_interpretation = "Projected effect likely to reach strong significance."
 
+    # Step 9: Calculate % change from baseline
+    pct_change_active = (mean_active / baseline_active) * 100
+    pct_change_placebo = (mean_placebo / baseline_placebo) * 100
+
     st.header("📊 Results")
     st.write(f"**Parameter:** {parameter_name}")
     st.write(f"**Mean Difference (Day 90):** {mean_diff:.2f} units")
@@ -81,6 +87,8 @@ if st.button("Calculate"):
     st.write(f"**t-value:** {t_value:.2f}")
     st.write(f"**p-value (two-tailed):** {p_value:.3f}")
     st.write(f"**Cohen's d (Effect Size):** {cohen_d:.2f}")
+    st.write(f"**% Change from Baseline (Active):** {pct_change_active:.2f}%")
+    st.write(f"**% Change from Baseline (Placebo):** {pct_change_placebo:.2f}%")
     st.success(interpretation)
 
     st.header("📈 Projection to Day " + str(project_to_day))
@@ -98,6 +106,8 @@ if st.button("Calculate"):
         "t-value": [t_value],
         "p-value": [p_value],
         "Cohen's d": [cohen_d],
+        "% Change Active": [pct_change_active],
+        "% Change Placebo": [pct_change_placebo],
         f"Projected Mean Difference (Day {project_to_day})": [projected_diff],
         f"Projected Cohen's d (Day {project_to_day})": [projected_d],
         "Interpretation": [interpretation],
@@ -111,4 +121,3 @@ if st.button("Calculate"):
     output.seek(0)
 
     st.download_button("📥 Download Results as Excel, COPYRIGHT A.PANDE@VALENSA.COM", data=output, file_name=f"{file_name}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-
